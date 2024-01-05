@@ -4,6 +4,7 @@ import Cookies from 'universal-cookie';
 import fetch from 'src/hooks/use-fetch';
 import { TOKEN } from 'src/constant/auth';
 import { useRouter } from 'next/navigation';
+import { jwtDecode } from "jwt-decode";
 
 const HANDLERS = {
   INITIALIZE: 'INITIALIZE',
@@ -14,11 +15,12 @@ const HANDLERS = {
 const initialState = {
   isAuthenticated: false,
   isLoading: true,
-  user: null
+  user: null,
 };
 
 const handlers = {
   [HANDLERS.INITIALIZE]: (state, action) => {
+    console.log('action.payload', action.payload)
     const user = action.payload;
 
     return {
@@ -80,8 +82,8 @@ export const AuthProvider = (props) => {
     initialized.current = true;
 
     let isAuthenticated = false;
-    
-    if (cookie.get(TOKEN, {path: '/'})) {
+    const token = cookie.get(TOKEN, {path: '/'})
+    if (token) {
       isAuthenticated = true
       router.push('/')
     } 
@@ -89,12 +91,7 @@ export const AuthProvider = (props) => {
 
 
     if (isAuthenticated) {
-      const user = {
-        id: '5e86809283e28b96d2d38537',
-        avatar: '/assets/avatars/avatar-anika-visser.png',
-        name: 'Anika Visser',
-        email: 'anika.visser@devias.io'
-      };
+      const user = decodedJWT(token)
 
       dispatch({
         type: HANDLERS.INITIALIZE,
@@ -115,30 +112,31 @@ export const AuthProvider = (props) => {
     []
   );
 
+  const decodedJWT = (payload) => {
+    const user = jwtDecode(payload)
+    return user
+  }
+
   const signIn = async (email, password) => {
 
     try {
-      const response = await fetch.post("/auth/signin",{ email: email, password: password })
+      const response = await fetch.post("/cms/auth/signin",{ email: email, password: password })
       if (response) {
+        const user = decodedJWT(response.data.data.token)
+        if (user) {
+          dispatch({
+            type: HANDLERS.SIGN_IN,
+            payload: user
+          });
+        }
         cookie.set(TOKEN, response.data.data.token, { path: '/' });
       }
     } catch (err) {
       console.error(err);
       throw new Error('Please check your email and password');
-
     }
 
-    const user = {
-      id: '5e86809283e28b96d2d38537',
-      avatar: '/assets/avatars/avatar-anika-visser.png',
-      name: 'Anika Visser',
-      email: 'anika.visser@devias.io'
-    };
 
-    dispatch({
-      type: HANDLERS.SIGN_IN,
-      payload: user
-    });
   };
 
   const signUp = async (email, name, password) => {

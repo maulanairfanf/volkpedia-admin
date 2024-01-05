@@ -29,7 +29,7 @@ const Page = () => {
   const [isLoading, setIsloading] = useState(false)
   const formik = useFormik({
     initialValues: {
-      email: 'maulanairfanf@gmail.com',
+      email: 'admin1@gmail.com',
       password: 'password',
       submit: null
     },
