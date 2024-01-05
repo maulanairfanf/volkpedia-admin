@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useReducer, useRef } from 'react';
 import PropTypes from 'prop-types';
+import Cookies from 'universal-cookie';
 
 const HANDLERS = {
   INITIALIZE: 'INITIALIZE',
@@ -59,7 +60,10 @@ const reducer = (state, action) => (
 
 export const AuthContext = createContext({ undefined });
 
+
 export const AuthProvider = (props) => {
+  var cookie = new Cookies();
+
   const { children } = props;
   const [state, dispatch] = useReducer(reducer, initialState);
   const initialized = useRef(false);
@@ -75,7 +79,7 @@ export const AuthProvider = (props) => {
     let isAuthenticated = false;
 
     try {
-      isAuthenticated = window.sessionStorage.getItem('authenticated') === 'true';
+      isAuthenticated = cookie.get('authenticated') === 'true';
     } catch (err) {
       console.error(err);
     }
@@ -109,7 +113,7 @@ export const AuthProvider = (props) => {
 
   const skip = () => {
     try {
-      window.sessionStorage.setItem('authenticated', 'true');
+      Cookie().set('authenticated', 'true');
     } catch (err) {
       console.error(err);
     }
@@ -133,7 +137,7 @@ export const AuthProvider = (props) => {
     }
 
     try {
-      window.sessionStorage.setItem('authenticated', 'true');
+      cookie.set('authenticated', 'true', { path: '/' });
     } catch (err) {
       console.error(err);
     }
