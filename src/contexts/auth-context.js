@@ -1,6 +1,9 @@
 import { createContext, useContext, useEffect, useReducer, useRef } from 'react';
 import PropTypes from 'prop-types';
 import Cookies from 'universal-cookie';
+import fetch from 'src/hooks/use-fetch';
+import { TOKEN } from 'src/constant/auth';
+import { useRouter } from 'next/navigation';
 
 const HANDLERS = {
   INITIALIZE: 'INITIALIZE',
@@ -62,8 +65,8 @@ export const AuthContext = createContext({ undefined });
 
 
 export const AuthProvider = (props) => {
-  var cookie = new Cookies();
-
+  const cookie = new Cookies();
+  const router = useRouter()
   const { children } = props;
   const [state, dispatch] = useReducer(reducer, initialState);
   const initialized = useRef(false);
@@ -77,12 +80,13 @@ export const AuthProvider = (props) => {
     initialized.current = true;
 
     let isAuthenticated = false;
+    
+    if (cookie.get(TOKEN, {path: '/'})) {
+      isAuthenticated = true
+      router.push('/')
+    } 
+    else router.push('/auth/login')
 
-    try {
-      isAuthenticated = cookie.get('authenticated') === 'true';
-    } catch (err) {
-      console.error(err);
-    }
 
     if (isAuthenticated) {
       const user = {
@@ -111,35 +115,17 @@ export const AuthProvider = (props) => {
     []
   );
 
-  const skip = () => {
-    try {
-      Cookie().set('authenticated', 'true');
-    } catch (err) {
-      console.error(err);
-    }
-
-    const user = {
-      id: '5e86809283e28b96d2d38537',
-      avatar: '/assets/avatars/avatar-anika-visser.png',
-      name: 'Anika Visser',
-      email: 'anika.visser@devias.io'
-    };
-
-    dispatch({
-      type: HANDLERS.SIGN_IN,
-      payload: user
-    });
-  };
-
   const signIn = async (email, password) => {
-    if (email !== 'demo@devias.io' || password !== 'Password123!') {
-      throw new Error('Please check your email and password');
-    }
 
     try {
-      cookie.set('authenticated', 'true', { path: '/' });
+      const response = await fetch.post("/auth/signin",{ email: email, password: password })
+      if (response) {
+        cookie.set(TOKEN, response.data.data.token, { path: '/' });
+      }
     } catch (err) {
       console.error(err);
+      throw new Error('Please check your email and password');
+
     }
 
     const user = {
@@ -160,6 +146,7 @@ export const AuthProvider = (props) => {
   };
 
   const signOut = () => {
+    cookie.remove(TOKEN, { path: '/' });
     dispatch({
       type: HANDLERS.SIGN_OUT
     });
@@ -169,7 +156,6 @@ export const AuthProvider = (props) => {
     <AuthContext.Provider
       value={{
         ...state,
-        skip,
         signIn,
         signUp,
         signOut
