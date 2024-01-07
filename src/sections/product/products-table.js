@@ -1,10 +1,9 @@
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
 import {
-  Avatar,
   Box,
   Card,
-  Checkbox,
+  IconButton,
   Stack,
   Table,
   TableBody,
@@ -15,25 +14,22 @@ import {
   Typography
 } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
-import { getInitials } from 'src/utils/get-initials';
+import TrashIcon from '@heroicons/react/24/solid/TrashIcon';
+import PencilIcon from '@heroicons/react/24/solid/PencilIcon';
+import { SvgIcon } from '@mui/material';
+import { rupiah } from '../../utils/currency'
 
-export const CustomersTable = (props) => {
+export default function ProductsTable (props) {
   const {
     count = 0,
     items = [],
-    onDeselectAll,
-    onDeselectOne,
     onPageChange = () => {},
     onRowsPerPageChange,
-    onSelectAll,
-    onSelectOne,
     page = 0,
     rowsPerPage = 0,
-    selected = []
+    onHandleDialogDelete = () => {},
+    onHandleDialogCreate = () => {}
   } = props;
-
-  const selectedSome = (selected.length > 0) && (selected.length < items.length);
-  const selectedAll = (items.length > 0) && (selected.length === items.length);
 
   return (
     <Card>
@@ -42,6 +38,9 @@ export const CustomersTable = (props) => {
           <Table>
             <TableHead>
               <TableRow>
+                <TableCell>
+                  Action
+                </TableCell>
                 <TableCell>
                   Name
                 </TableCell>
@@ -54,9 +53,9 @@ export const CustomersTable = (props) => {
                 <TableCell>
                   Stock
                 </TableCell>
-                {/* <TableCell>
+                <TableCell>
                   Image
-                </TableCell> */}
+                </TableCell>
                 <TableCell>
                   Location
                 </TableCell>
@@ -64,15 +63,38 @@ export const CustomersTable = (props) => {
             </TableHead>
             <TableBody>
               {items.map((product) => {
-                // const isSelected = selected.includes(customer.id);
-                // const createdAt = format(customer.createdAt, 'dd/MM/yyyy');
-
                 return (
                   <TableRow
                     hover
                     key={product._id}
                   >
-                    <TableCell>
+                    <TableCell >
+                      <Stack
+                        alignItems="center"
+                        direction="row"
+                        spacing={2}
+                      >
+                        <IconButton 
+                          onClick={() => onHandleDialogDelete(true, product._id)}
+                          color="error" 
+                          size="small"
+                        >
+                          <SvgIcon aria-label="delete">
+                            <TrashIcon />
+                          </SvgIcon>
+                        </IconButton>
+                        <IconButton 
+                          onClick={() => onHandleDialogCreate(true, product)}
+                          color="success" 
+                          size="small"
+                        >
+                          <SvgIcon aria-label="update">
+                            <PencilIcon />
+                          </SvgIcon>
+                        </IconButton>
+                      </Stack>
+                    </TableCell>
+                    <TableCell style={{width: 300}}>
                       <Stack
                         alignItems="center"
                         direction="row"
@@ -83,18 +105,21 @@ export const CustomersTable = (props) => {
                         </Typography>
                       </Stack>
                     </TableCell>
-                    <TableCell>
+                    <TableCell style={{width: 300}}>
                       {product.description}
                     </TableCell>
                     <TableCell>
-                      {product.price}
+                      {rupiah(product.price)}
                     </TableCell>
                     <TableCell>
                       {product.stock}
                     </TableCell>
-                    {/* <TableCell>
-                      {product.image}
-                    </TableCell> */}
+                    <TableCell>
+                      <img 
+                        style={{width: 300, height: 150, borderRadius: 10, objectFit: "cover"}} 
+                        src={product.image}
+                      />
+                    </TableCell>
                     <TableCell>
                       {product.location}
                     </TableCell>
@@ -105,7 +130,8 @@ export const CustomersTable = (props) => {
           </Table>
         </Box>
       </Scrollbar>
-      {/* <TablePagination
+      {items.length !== 0 ? 
+        <TablePagination
         component="div"
         count={count}
         onPageChange={onPageChange}
@@ -113,12 +139,13 @@ export const CustomersTable = (props) => {
         page={page}
         rowsPerPage={rowsPerPage}
         rowsPerPageOptions={[5, 10, 25]}
-      /> */}
+        />: ''
+      }
     </Card>
   );
 };
 
-CustomersTable.propTypes = {
+ProductsTable.propTypes = {
   count: PropTypes.number,
   items: PropTypes.array,
   onDeselectAll: PropTypes.func,
@@ -129,5 +156,7 @@ CustomersTable.propTypes = {
   onSelectOne: PropTypes.func,
   page: PropTypes.number,
   rowsPerPage: PropTypes.number,
-  selected: PropTypes.array
+  selected: PropTypes.array,
+  onHandleDialogDelete: PropTypes.func,
+  onHandleDialogCreate: PropTypes.func
 };

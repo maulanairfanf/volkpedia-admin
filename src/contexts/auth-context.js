@@ -5,7 +5,6 @@ import fetch from 'src/hooks/use-fetch';
 import { TOKEN } from 'src/constant/auth';
 import { useRouter } from 'next/navigation';
 import { jwtDecode } from "jwt-decode";
-
 const HANDLERS = {
   INITIALIZE: 'INITIALIZE',
   SIGN_IN: 'SIGN_IN',
@@ -20,7 +19,6 @@ const initialState = {
 
 const handlers = {
   [HANDLERS.INITIALIZE]: (state, action) => {
-    console.log('action.payload', action.payload)
     const user = action.payload;
 
     return {
@@ -86,6 +84,7 @@ export const AuthProvider = (props) => {
     if (token) {
       isAuthenticated = true
       router.push('/')
+      setBearer(token)
     } 
     else router.push('/auth/login')
 
@@ -93,7 +92,7 @@ export const AuthProvider = (props) => {
     if (isAuthenticated) {
       const user = decodedJWT(token)
 
-      dispatch({
+    dispatch({
         type: HANDLERS.INITIALIZE,
         payload: user
       });
@@ -111,6 +110,10 @@ export const AuthProvider = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
+
+  const setBearer = (token) => {
+    fetch.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  }
 
   const decodedJWT = (payload) => {
     const user = jwtDecode(payload)
@@ -130,6 +133,7 @@ export const AuthProvider = (props) => {
           });
         }
         cookie.set(TOKEN, response.data.data.token, { path: '/' });
+        setBearer(response.data.data.token)
       }
     } catch (err) {
       console.error(err);

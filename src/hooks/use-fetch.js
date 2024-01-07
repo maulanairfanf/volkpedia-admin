@@ -1,4 +1,8 @@
 import axios from 'axios';
+import { TOKEN } from 'src/constant/auth';
+import Cookies from 'universal-cookie';
+
+const cookie = new Cookies();
 
 const fetch = axios.create({
   baseURL: process.env.API_URL, // Replace with your API base URL
@@ -9,12 +13,12 @@ const fetch = axios.create({
 fetch.interceptors.request.use(
   (config) => {
     // Modify the request config here (add headers, authentication tokens)
-        // const accessToken = JSON.parse(localStorage.getItem("token"));
+    const accessToken = cookie.get(TOKEN, {path: '/'})
 
     // If token is present add it to request's Authorization Header
-    // if (accessToken) {
-    //   if (config.headers) config.headers.token = accessToken;
-    // }
+    if (accessToken) {
+      if (config.headers) config.headers.token = accessToken;
+    }
     return config;
   },
   (error) => {
