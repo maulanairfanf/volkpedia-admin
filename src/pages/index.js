@@ -9,7 +9,6 @@ import { OverviewSales } from 'src/sections/overview/overview-sales';
 import { OverviewCart } from 'src/sections/overview/overview-cart';
 import { OverviewTotalCustomers } from 'src/sections/overview/overview-total-customers';
 import { OverviewOrder } from 'src/sections/overview/overview-order';
-import { OverviewTraffic } from 'src/sections/overview/overview-traffic';
 import { useEffect, useState } from 'react';
 import fetch from 'src/hooks/use-fetch';
 
@@ -74,7 +73,7 @@ const Page = () => {
             <OverviewTotalProduct
               difference={12}
               sx={{ height: '100%' }}
-              value={data.product}
+              value={data.countProduct}
             />
           </Grid>
           <Grid
@@ -85,7 +84,7 @@ const Page = () => {
             <OverviewTotalCustomers
               difference={16}
               sx={{ height: '100%' }}
-              value={data.customer}
+              value={data.countCustomer}
             />
           </Grid>
           <Grid
@@ -96,7 +95,7 @@ const Page = () => {
             <OverviewCart
               difference={16}
               sx={{ height: '100%' }}
-              value={data.cart}
+              value={data.countCart}
             />
           </Grid>
           <Grid
@@ -107,12 +106,11 @@ const Page = () => {
             <OverviewOrder
               difference={16}
               sx={{ height: '100%' }}
-              value={data.order}
+              value={data.countOrder}
             />
           </Grid>
           <Grid
             xs={12}
-            lg={8}
           >
             <OverviewSales
               chartSeries={[
@@ -120,22 +118,7 @@ const Page = () => {
                   name: 'This year',
                   data: [18, 16, 5, 8, 3, 14, 14, 16, 17, 19, 18, 20]
                 },
-                {
-                  name: 'Last year',
-                  data: [12, 11, 4, 6, 2, 9, 9, 10, 11, 12, 13, 13]
-                }
               ]}
-              sx={{ height: '100%' }}
-            />
-          </Grid>
-          <Grid
-            xs={12}
-            md={6}
-            lg={4}
-          >
-            <OverviewTraffic
-              chartSeries={[63, 15, 22]}
-              labels={['Desktop', 'Tablet', 'Phone']}
               sx={{ height: '100%' }}
             />
           </Grid>
@@ -145,38 +128,7 @@ const Page = () => {
             lg={4}
           >
             <OverviewLatestProducts
-              products={[
-                {
-                  id: '5ece2c077e39da27658aa8a9',
-                  image: '/assets/products/product-1.png',
-                  name: 'Healthcare Erbology',
-                  updatedAt: subHours(now, 6).getTime()
-                },
-                {
-                  id: '5ece2c0d16f70bff2cf86cd8',
-                  image: '/assets/products/product-2.png',
-                  name: 'Makeup Lancome Rouge',
-                  updatedAt: subDays(subHours(now, 8), 2).getTime()
-                },
-                {
-                  id: 'b393ce1b09c1254c3a92c827',
-                  image: '/assets/products/product-5.png',
-                  name: 'Skincare Soja CO',
-                  updatedAt: subDays(subHours(now, 1), 1).getTime()
-                },
-                {
-                  id: 'a6ede15670da63f49f752c89',
-                  image: '/assets/products/product-6.png',
-                  name: 'Makeup Lipstick',
-                  updatedAt: subDays(subHours(now, 3), 3).getTime()
-                },
-                {
-                  id: 'bcad5524fe3a2f8f8620ceda',
-                  image: '/assets/products/product-7.png',
-                  name: 'Healthcare Ritual',
-                  updatedAt: subDays(subHours(now, 5), 6).getTime()
-                }
-              ]}
+              products={data.product}
               sx={{ height: '100%' }}
             />
           </Grid>

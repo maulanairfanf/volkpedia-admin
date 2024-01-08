@@ -1,4 +1,5 @@
-import { formatDistanceToNow } from 'date-fns';
+import { format, formatDistanceToNow } from 'date-fns';
+
 import PropTypes from 'prop-types';
 import ArrowRightIcon from '@heroicons/react/24/solid/ArrowRightIcon';
 import EllipsisVerticalIcon from '@heroicons/react/24/solid/EllipsisVerticalIcon';
@@ -16,9 +17,19 @@ import {
   ListItemText,
   SvgIcon
 } from '@mui/material';
+import { useRouter } from 'next/navigation';
 
 export const OverviewLatestProducts = (props) => {
   const { products = [], sx } = props;
+  const router = useRouter()
+
+  function handleFormateDate (payload)  {
+    let formattingDate = format(new Date(payload), "yyyy M dd H m s").split(" ")
+    formattingDate[1] = formattingDate[1] - 1
+    const result = formatDistanceToNow(new Date(...formattingDate), {includeSeconds: true});
+
+    return result
+  }
 
   return (
     <Card sx={sx}>
@@ -26,38 +37,24 @@ export const OverviewLatestProducts = (props) => {
       <List>
         {products.map((product, index) => {
           const hasDivider = index < products.length - 1;
-          const ago = formatDistanceToNow(product.updatedAt);
-
+          const ago = handleFormateDate(product.updatedAt)
+          // let formattingDate = format(new Date(product.updatedAt), "yyyy M dd H m s").split(" ")
+          // formattingDate[1] = formattingDate[1] - 1
           return (
             <ListItem
               divider={hasDivider}
-              key={product.id}
+              key={product._id}
             >
               <ListItemAvatar>
-                {
-                  product.image
-                    ? (
-                      <Box
-                        component="img"
-                        src={product.image}
-                        sx={{
-                          borderRadius: 1,
-                          height: 48,
-                          width: 48
-                        }}
-                      />
-                    )
-                    : (
-                      <Box
-                        sx={{
-                          borderRadius: 1,
-                          backgroundColor: 'neutral.200',
-                          height: 48,
-                          width: 48
-                        }}
-                      />
-                    )
-                }
+                <Box
+                  component="img"
+                  src={product.image}
+                  sx={{
+                    borderRadius: 1,
+                    height: 48,
+                    width: 48
+                  }}
+                />
               </ListItemAvatar>
               <ListItemText
                 primary={product.name}
@@ -65,11 +62,6 @@ export const OverviewLatestProducts = (props) => {
                 secondary={`Updated ${ago} ago`}
                 secondaryTypographyProps={{ variant: 'body2' }}
               />
-              <IconButton edge="end">
-                <SvgIcon>
-                  <EllipsisVerticalIcon />
-                </SvgIcon>
-              </IconButton>
             </ListItem>
           );
         })}
@@ -85,6 +77,7 @@ export const OverviewLatestProducts = (props) => {
           )}
           size="small"
           variant="text"
+          onClick={() => router.push('/products')}
         >
           View all
         </Button>
