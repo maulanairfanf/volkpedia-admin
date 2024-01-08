@@ -1,19 +1,53 @@
 import Head from 'next/head';
 import { subDays, subHours } from 'date-fns';
-import { Box, Container, Unstable_Grid2 as Grid } from '@mui/material';
+import { Box, CircularProgress, Container, Unstable_Grid2 as Grid, Stack } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
-import { OverviewBudget } from 'src/sections/overview/overview-budget';
+import { OverviewTotalProduct } from 'src/sections/overview/overview-total-product';
 import { OverviewLatestOrders } from 'src/sections/overview/overview-latest-orders';
 import { OverviewLatestProducts } from 'src/sections/overview/overview-latest-products';
 import { OverviewSales } from 'src/sections/overview/overview-sales';
-import { OverviewTasksProgress } from 'src/sections/overview/overview-tasks-progress';
+import { OverviewCart } from 'src/sections/overview/overview-cart';
 import { OverviewTotalCustomers } from 'src/sections/overview/overview-total-customers';
-import { OverviewTotalProfit } from 'src/sections/overview/overview-total-profit';
+import { OverviewOrder } from 'src/sections/overview/overview-order';
 import { OverviewTraffic } from 'src/sections/overview/overview-traffic';
+import { useEffect, useState } from 'react';
+import fetch from 'src/hooks/use-fetch';
 
 const now = new Date();
 
-const Page = () => (
+const Page = () => {
+  const [isLoading, setIsLoading] = useState(false)
+  const [data, setData] = useState(null)
+
+  async function getData() {
+    setIsLoading(true)
+    try {
+      const response = await fetch.get('/cms/dashboard')
+      console.log('response', response)
+      setData(response.data.data)
+    } catch (error) {
+      console.log('error', error)
+    }
+    setIsLoading(false)
+  }
+  useEffect(() => {
+    getData()
+  },[])
+
+  if (data === null) {
+    return (
+      <Stack
+        direction="row"
+        justifyContent="center"
+        alignItems="center"
+        mt={50}
+      >
+        <CircularProgress />
+      </Stack>
+    )
+  }
+  
+  return (
   <>
     <Head>
       <title>
@@ -37,11 +71,10 @@ const Page = () => (
             sm={6}
             lg={3}
           >
-            <OverviewBudget
+            <OverviewTotalProduct
               difference={12}
-              positive
               sx={{ height: '100%' }}
-              value="$24k"
+              value={data.product}
             />
           </Grid>
           <Grid
@@ -51,9 +84,8 @@ const Page = () => (
           >
             <OverviewTotalCustomers
               difference={16}
-              positive={false}
               sx={{ height: '100%' }}
-              value="1.6k"
+              value={data.customer}
             />
           </Grid>
           <Grid
@@ -61,9 +93,10 @@ const Page = () => (
             sm={6}
             lg={3}
           >
-            <OverviewTasksProgress
+            <OverviewCart
+              difference={16}
               sx={{ height: '100%' }}
-              value={75.5}
+              value={data.cart}
             />
           </Grid>
           <Grid
@@ -71,9 +104,10 @@ const Page = () => (
             sm={6}
             lg={3}
           >
-            <OverviewTotalProfit
+            <OverviewOrder
+              difference={16}
               sx={{ height: '100%' }}
-              value="$15k"
+              value={data.order}
             />
           </Grid>
           <Grid
@@ -221,7 +255,7 @@ const Page = () => (
       </Container>
     </Box>
   </>
-);
+)};
 
 Page.getLayout = (page) => (
   <DashboardLayout>

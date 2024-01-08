@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
-import CurrencyDollarIcon from '@heroicons/react/24/solid/CurrencyDollarIcon';
+import ClipboardDocumentCheckIcon from '@heroicons/react/24/solid/ClipboardDocumentCheckIcon';
 import { Avatar, Card, CardContent, Stack, SvgIcon, Typography } from '@mui/material';
 
-export const OverviewTotalProfit = (props) => {
-  const { value, sx } = props;
+export const OverviewOrder = (props) => {
+  const { difference, positive, value, sx } = props;
 
   return (
     <Card sx={sx}>
@@ -19,7 +19,7 @@ export const OverviewTotalProfit = (props) => {
               color="text.secondary"
               variant="overline"
             >
-              Total Profit
+              Already Order
             </Typography>
             <Typography variant="h4">
               {value}
@@ -33,7 +33,7 @@ export const OverviewTotalProfit = (props) => {
             }}
           >
             <SvgIcon>
-              <CurrencyDollarIcon />
+              <ClipboardDocumentCheckIcon />
             </SvgIcon>
           </Avatar>
         </Stack>
@@ -42,7 +42,9 @@ export const OverviewTotalProfit = (props) => {
   );
 };
 
-OverviewTotalProfit.propTypes = {
-  value: PropTypes.string,
-  sx: PropTypes.object
+OverviewOrder.propTypes = {
+  difference: PropTypes.number,
+  positive: PropTypes.bool,
+  sx: PropTypes.object,
+  value: PropTypes.number.isRequired
 };
