@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import Head from 'next/head';
-import { Box, Container, Stack, Typography } from '@mui/material';
+import { Box, Button, CircularProgress, Container, IconButton, Stack, SvgIcon, Typography } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
-import CustomersTable from 'src/sections/customer/customers-table';
-import CustomersSearch from 'src/sections/customer/customers-search';
+import CartTable from 'src/sections/cart/cart-table';
+import CartSearch from 'src/sections/cart/cart-search';
 import fetch from 'src/hooks/use-fetch';
-
 
 const Page = () => {
   const [page, setPage] = useState(0);
@@ -28,23 +27,6 @@ const Page = () => {
     []
   );
 
-  async function handleUpdateStatus (id, payload) {
-    const params = {
-      status: payload
-    }
-    setIsLoading(true)
-    try {
-      const response = await fetch.put('/status/' + id, params)
-      console.log('response', response)
-      if (response) {
-        await getData()
-      }
-
-    } catch (error) {
-      console.log('error', error)
-    }
-    setIsLoading(false)
-  }
   
   async function getData() {
     setIsLoading(true)
@@ -54,7 +36,7 @@ const Page = () => {
       query: query
     }
     try {
-      const response = await fetch.get('/customer', {params})
+      const response = await fetch.get('/cms/cart', {params})
       console.log('response', response)
       setData(response.data.data)
       setCountData(response.data.total)
@@ -91,19 +73,18 @@ const Page = () => {
             >
               <Stack spacing={1}>
                 <Typography variant="h4">
-                  Customer
+                  Cart
                 </Typography>
               </Stack>
             </Stack>
-            <CustomersSearch setQuery={setQuery}/>
-            <CustomersTable
+            <CartSearch setQuery={setQuery}/>
+            <CartTable
               count={countData}
               items={data}
               onPageChange={handlePageChange}
               onRowsPerPageChange={handleRowsPerPageChange}
               page={page}
               rowsPerPage={rowsPerPage}
-              handleUpdateStatus={handleUpdateStatus}
               />
           </Stack>
         </Container>
