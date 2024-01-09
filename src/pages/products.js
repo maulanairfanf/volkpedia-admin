@@ -92,8 +92,8 @@ const Page = () => {
     setIsLoading(true)
     try {
       let response 
-      if (modeForm === "updated") response = await fetch.put(`/product/${value._id}`, params)
-      else if (modeForm === "created") response = await fetch.post('/product', params)
+      if (modeForm === "updated") response = await fetch.put(`/cms/product/${value._id}`, params)
+      else if (modeForm === "created") response = await fetch.post('/cms/product', params)
       if (response) {
         await getData()
         setPage(0)
@@ -113,7 +113,7 @@ const Page = () => {
   async function handleDelete () {
     setIsLoading(true)
     try {
-      const response = await fetch.delete('/product/' + idProduct)
+      const response = await fetch.delete('/cms/product/' + idProduct)
       if (response) {
         await getData()
         handleDialogDelete(false, '')
@@ -134,7 +134,7 @@ const Page = () => {
       query: query
     }
     try {
-      const response = await fetch.get('/product', {params})
+      const response = await fetch.get('/cms/product', {params})
       setData(response.data.data)
       setCountData(response.data.total)
     } catch (error) {

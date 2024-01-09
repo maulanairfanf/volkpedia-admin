@@ -1,8 +1,6 @@
 import { format, formatDistanceToNow } from 'date-fns';
-
 import PropTypes from 'prop-types';
 import ArrowRightIcon from '@heroicons/react/24/solid/ArrowRightIcon';
-import EllipsisVerticalIcon from '@heroicons/react/24/solid/EllipsisVerticalIcon';
 import {
   Box,
   Button,
@@ -10,7 +8,6 @@ import {
   CardActions,
   CardHeader,
   Divider,
-  IconButton,
   List,
   ListItem,
   ListItemAvatar,
