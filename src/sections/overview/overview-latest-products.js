@@ -38,8 +38,7 @@ export const OverviewLatestProducts = (props) => {
         {products.map((product, index) => {
           const hasDivider = index < products.length - 1;
           const ago = handleFormateDate(product.updatedAt)
-          // let formattingDate = format(new Date(product.updatedAt), "yyyy M dd H m s").split(" ")
-          // formattingDate[1] = formattingDate[1] - 1
+
           return (
             <ListItem
               divider={hasDivider}

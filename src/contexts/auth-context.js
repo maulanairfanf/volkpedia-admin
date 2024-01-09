@@ -24,7 +24,6 @@ const handlers = {
     return {
       ...state,
       ...(
-        // if payload (user) is provided, then is authenticated
         user
           ? ({
             isAuthenticated: true,
@@ -107,7 +106,6 @@ export const AuthProvider = (props) => {
     () => {
       initialize();
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 

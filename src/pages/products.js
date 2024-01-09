@@ -81,7 +81,6 @@ const Page = () => {
   }
 
   async function handleForm (value) {
-    console.log('value', value)
     const params = {
       name: value.name,
       description: value.description,
@@ -120,19 +119,6 @@ const Page = () => {
         handleDialogDelete(false, '')
         setPage(0)
       }
-    } catch (error) {
-      console.log('error', error)
-    }
-    setIsLoading(false)
-  }
-
-  async function handleCreate (payload) {
-    setIsLoading(true)
-    try {
-      const response = await fetch.post('/product', payload)
-      if (response) await getData()
-      handleDialogDelete(false, '')
-      setPage(0)
     } catch (error) {
       console.log('error', error)
     }
